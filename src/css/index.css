@@ -1,0 +1,73 @@
+::-webkit-scrollbar{
+  width: 6px;
+}
+::-webkit-scrollbar-thumb{
+  border-radius: 6px;
+  -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  background-color: #021931;
+}
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  border-radius: 10px;
+  background: #EDEDED;
+}
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  //width:1920px;
+  //height:900px;
+  //overflow: auto;
+  position: relative;
+  font-family: "微软雅黑","Microsoft Yahei";
+}
+#app{
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #002723;
+}
+.icon-metro{
+  display: block;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  left:-15px;
+  top:-24px;
+  cursor: pointer;
+}
+.icon-metro:hover{
+  zoom:1.2;
+}
+//#MapContainer table[_disable_mw]{
+//  background-color:red;
+//}
+#dailyCount{
+  position: absolute;
+  left:10px;
+  top:10px;
+  background-color:rgba(0,0,0,0.8);
+  color:#fff;
+  font-size:16px;
+  z-index: 2;
+  padding:6px 10px;
+}
+#dailyCount_nb{
+  position: absolute;
+  left:10px;
+  top:10px;
+  background-color:rgba(0,0,0,0.8);
+  color:#fff;
+  font-size:16px;
+  z-index: 2;
+  padding:6px 10px;
+}
+#map_zhejiang{
+  width:100%;
+  height:100%;
+  position: absolute;
+  left:0;
+  top:0;
+  z-index: 100;
+  background-color:#fff;
+}
