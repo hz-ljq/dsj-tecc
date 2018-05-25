@@ -1,6 +1,8 @@
 <template>
 <div id='app'>
-  <div class='shadowLayer flexCenter' :class='{hide:isDone}'>资源加载中...</div>
+  <div id='map'></div>
+
+  <!-- <div class='shadowLayer flexCenter' :class='{hide:isDone}'>资源加载中...</div>
   <div id='sideMenu'>
     <div class='menuItem'>
       <div class='menuTitle'>客流统计</div>
@@ -23,8 +25,8 @@
     <div id='headBar'>
       <div style='color:#fff;width: 460px;height: 100%;margin:auto;' class='flexCenter'><span style='font-size: 36px;font-weight: bold;padding:0 14px;'>长途客运</span><span style='font-size: 26px;font-weight: bold;'>{{date}}</span></div>
     </div>
+    <div id='map'></div>
     <div id='mapbar'></div>
-    <!-- <div id='map'></div> -->
     <div id='chartOverview' style='width: 250px;height: 250px;position: absolute;bottom:10px;right:10px; z-index: 10;background-color:rgba(7,2,33,0.7);'></div>
     <div id='stationDetail' class='panelDetail' :class='{hide:dIsHide}'>
       <div @click='hideDS()' style='width: 30px;height: 30px;color:#fff;font-size: 40px;line-height: 30px;text-align: center;position:absolute;right:10px;top:10px;z-index: 2;cursor: pointer'>×</div>
@@ -40,7 +42,7 @@
       <div class='blueTitle'>站点近7天客流趋势</div>
       <div id='sChart_days' style='height: 150px;'></div>
     </div>
-  </div>
+  </div> -->
   <!--<div class='searchPanel' style='position:absolute;right:60px;top: 10px;'>-->
   <!--<input type='text' id='search' v-model='keyword' placeholder='请输入客运站名搜索' />-->
   <!--<button id='btn-search' @click='getStationInfo(keyword)'>搜索</button>-->
@@ -113,26 +115,44 @@ export default {
     }
   },
   methods: {
+    initMap() {
+      window.minemap.domainUrl = '//minedata.cn';
+      window.minemap.dataDomainUrl = '//datahive.minedata.cn';
+      window.minemap.spriteUrl = '//minedata.cn/minemapapi/v1.3/sprite/sprite';
+      window.minemap.serviceUrl = '//minedata.cn/service';
+      window.minemap.accessToken = '0c95154806ed45369e3858f0c69caa59';
+      window.minemap.solution = 5584;
+      this.myMap = new window.minemap.Map({
+        container: 'map',
+        style: '//minedata.cn/service/solu/style/id/5584',
+        center: [120.84146, 29.65949],
+        zoom: 8,
+        pitch: 10,
+        // dragRotate: true,
+        maxZoom: 17, // 地图最大缩放级别限制
+        minZoom: 9 // 地图最小缩放级别限制
+      });
+    },
     init: function() {
-      let _this = this;
-      maplet = new Maplet('mapbar'); //挂载地图实例至全局对象
-      maplet.centerAndZoom(new MPoint(120.84146, 29.65949), 8);
-      // maplet.setOverviewLocation({
-      //   type: Maplet.LEFT_BOTTOM
-      // });
-      //此处处理老版本地图无法自适应频幕尺寸的问题-----start
-      let D_mapbar = document.getElementById('mapbar');
-      maplet.resize(D_mapbar.offsetWidth, D_mapbar.offsetHeight);
-      window.onresize = function() {
-        D_mapbar.style.width = '100%';
-        D_mapbar.style.height = 'calc(100% - 62px)';
-        maplet.resize(D_mapbar.offsetWidth, D_mapbar.offsetHeight);
-      }
-      //此处处理老版本地图无法自适应频幕尺寸的问题-----end
-      this.curStation.ssChart = echarts.init(document.getElementById('sChart_ss'), 'myTheme');
-      this.curStation.daysChart = echarts.init(document.getElementById('sChart_days'), 'myTheme');
-      this.curStation.ssChart.setOption(this.curStation.ssOption);
-      this.curStation.daysChart.setOption(this.curStation.daysOption);
+      // let _this = this;
+      // maplet = new Maplet('mapbar'); //挂载地图实例至全局对象
+      // maplet.centerAndZoom(new MPoint(120.84146, 29.65949), 8);
+      // // maplet.setOverviewLocation({
+      // //   type: Maplet.LEFT_BOTTOM
+      // // });
+      // //此处处理老版本地图无法自适应频幕尺寸的问题-----start
+      // let D_mapbar = document.getElementById('mapbar');
+      // maplet.resize(D_mapbar.offsetWidth, D_mapbar.offsetHeight);
+      // window.onresize = function() {
+      //   D_mapbar.style.width = '100%';
+      //   D_mapbar.style.height = 'calc(100% - 62px)';
+      //   maplet.resize(D_mapbar.offsetWidth, D_mapbar.offsetHeight);
+      // }
+      // //此处处理老版本地图无法自适应频幕尺寸的问题-----end
+      // this.curStation.ssChart = echarts.init(document.getElementById('sChart_ss'), 'myTheme');
+      // this.curStation.daysChart = echarts.init(document.getElementById('sChart_days'), 'myTheme');
+      // this.curStation.ssChart.setOption(this.curStation.ssOption);
+      // this.curStation.daysChart.setOption(this.curStation.daysOption);
     },
     initOverviewChart: function() {
       let _this = this;
@@ -262,22 +282,19 @@ export default {
     }
   },
   mounted: function() {
-    this.init();
-    this.initOverviewChart();
-    this.watchDate();
-    this.drawBusStationPoint();
     this.isDone = true;
+    this.initMap();
+    this.$http.get(CONFIG.apiHost + '/RTS/queryPassengerStationStatistics').then((res) => {
+      res.data.code === '100000' && console.log(res.data.dataBody);
+    });
+
+    this.$http.get(`${CONFIG.apiHost}/RTS/queryPassengerStationInformation?zd=05771`).then((res) => {
+      console.log(res.data);
+    });
+    // this.init();
+    // this.initOverviewChart();
+    // this.watchDate();
+    // this.drawBusStationPoint();
   }
 }
 </script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>

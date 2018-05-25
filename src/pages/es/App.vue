@@ -111,7 +111,7 @@
 <script>
 import '../../css/reset.css';
 import '../../css/common.css';
-import './es.css';
+import './es.scss';
 
 // import Vue from 'vue';
 import httpApi from '../../js/httpApi';
@@ -354,6 +354,7 @@ export default {
     getOverviewData: function() {
       let _this = this;
       httpApi.getEmergencyStationAndPersonnelStatistics().then(res => res.json()).then(res => {
+        console.log(res.dataBody);
         if (res.code == '100000' && res.dataBody) {
           let data = res.dataBody;
           let arr0 = [],
@@ -422,6 +423,7 @@ export default {
             unitCode: esMarker.esInfo.unitCode,
             sname: esMarker.esInfo.unitName
           }).then(res => res.json()).then(res => {
+            console.log(res.dataBody);
             _this.dIsHide = false;
             if (res.code == '100000' && res.dataBody) {
               _this.esDetail = res.dataBody;
