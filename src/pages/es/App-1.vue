@@ -8,8 +8,8 @@
   <div id='map'></div>
   <div id='map-small'></div>
 
-  <div id='chart1'></div>
-  <div id='chart2'></div>
+  <div id='chart1' v-show="false"></div>
+  <div id='chart2' v-show="false"></div>
 
   <div id='info'></div>
 
@@ -39,6 +39,46 @@
     <!-- <div class='triangle-down'></div> -->
   </div>
 
+  <div id='table1'>
+    <div class='header'>
+      <div class='col1'>队伍名称</div>
+      <div class='col2'>队伍人数</div>
+    </div>
+    <marquee direction="up" scrollamount="2" onmouseover="this.stop();" onmouseout="this.start()" class='body'>
+      <div class='item' v-for='(item, index) in table1Data' :key='index'>
+        <div class='col1' :title="item.name">{{item.name}}</div>
+        <div class='col2' :title="item.value">{{item.value}}</div>
+      </div>
+    </marquee>
+  </div>
+  <div id='table2'>
+    <div class='header'>
+      <div class='col1'>机械名称</div>
+      <div class='col2'>机械人数</div>
+    </div>
+    <marquee direction="up" scrollamount="2" onmouseover="this.stop();" onmouseout="this.start()" class='body'>
+      <div class='item' v-for='(item, index) in table2Data' :key='index'>
+        <div class='col1' :title="item.name">{{item.name}}</div>
+        <div class='col2' :title="item.value">{{item.value}}</div>
+      </div>
+    </marquee>
+  </div>
+  <div id='table3'>
+    <div class='header'>
+      <div class='col1'>物资名称</div>
+      <div class='col2'>物资数量</div>
+      <div class='col3'>物资单位</div>
+    </div>
+    <marquee direction="up" scrollamount="2" onmouseover="this.stop();" onmouseout="this.start()" class='body'>
+      <div class='item' v-for='(item, index) in table3Data' :key='index'>
+        <div class='col1' :title="item.name">{{item.name}}</div>
+        <div class='col2' :title="item.value">{{item.value}}</div>
+        <div class='col3' :title="item.unit">{{item.unit}}</div>
+      </div>
+    </marquee>
+  </div>
+
+
 
 </div>
 </template>
@@ -49,12 +89,11 @@ import './es.scss';
 // import Util from '../../js/util';
 // import esCenter from '../../js/esCenter';
 import echarts from 'echarts';
-// import $ from 'jquery';
 import mapData_zhejiang from '../../assets/mapSource/province/zhejiang.json';
 
 import options from './options.js';
-window.jQuery = window.$ = require('jquery')
-require('velocity-animate')
+window.jQuery = window.$ = require('jquery'); // jquery安装3.2.1，最新的3.3.1版本不能与velocity配合，原因不明~~
+require('velocity-animate');
 
 export default {
   name: 'App',
@@ -72,7 +111,99 @@ export default {
       myMap: null,
       myMap2: null,
 
-      activePoint: {}
+      activePoint: {},
+
+      table1Data: [{
+        name: '杭州市jj交通运输应急抢险与保障急抢险与保障中心1',
+        value: 111
+      }, {
+        name: '杭州市jj交通运输应急抢险与保障中心1',
+        value: 222
+      }, {
+        name: '杭州市jj交通运输应急抢险与保障中心1',
+        value: 333
+      }, {
+        name: '杭州市jj交通运输应急抢险与保障中心1',
+        value: 444
+      }, {
+        name: '杭州市jj交通运输应急抢险与保障中心1',
+        value: 555
+      }, {
+        name: '杭州市jj交通运输应急抢险与保障中心1',
+        value: 666
+      }, {
+        name: '杭州市jj交通运输应急抢险与保障中心1',
+        value: 777
+      }, {
+        name: '杭州市jj交通运输应急抢险与保障中心1',
+        value: 888
+      }, {
+        name: '杭州市jj交通运输应急抢险与保障中心1',
+        value: 999
+      }],
+
+      table2Data: [{
+        name: '航空发动机吹雪车航空发动机吹雪车',
+        value: 111
+      }, {
+        name: '航空发动机吹雪车',
+        value: 222
+      }, {
+        name: '航空发动机吹雪车',
+        value: 333
+      }, {
+        name: '航空发动机吹雪车',
+        value: 444
+      }, {
+        name: '航空发动机吹雪车',
+        value: 555
+      }, {
+        name: '航空发动机吹雪车',
+        value: 666
+      }, {
+        name: '航空发动机吹雪车',
+        value: 777
+      }, {
+        name: '航空发动机吹雪车',
+        value: 888
+      }, {
+        name: '航空发动机吹雪车',
+        value: 999
+      }],
+
+      table3Data: [{
+        name: '编织袋/草包编织袋/草包编织袋/草包',
+        value: 1000,
+        unit: '个'
+      }, {
+        name: '编织袋/草包',
+        value: 10001,
+        unit: '个'
+      }, {
+        name: '编织袋/草包',
+        value: 1200,
+        unit: '个'
+      }, {
+        name: '编织袋/草包',
+        value: 100,
+        unit: '个'
+      }, {
+        name: '编织袋/草包',
+        value: 10,
+        unit: '个'
+      }, {
+        name: '编织袋/草包',
+        value: 3000,
+        unit: '个'
+      }, {
+        name: '编织袋/草包',
+        value: 1800,
+        unit: '个'
+      }, {
+        name: '编织袋/草包',
+        value: 1020,
+        unit: '个'
+      }, ]
     }
   },
   methods: {
@@ -217,7 +348,7 @@ export default {
           // el.setAttribute('data-lat', x.lat);
 
           this.markers[x.id] = new minemap.Marker(el, {
-              // offset: [-25, -25]
+              offset: [2, -5]
             })
             .setLngLat([x.lng, x.lat])
             // .setPopup(popup)
@@ -279,9 +410,26 @@ export default {
           });
         }
 
+        let geoData = {
+          type: 'FeatureCollection',
+          features: []
+        };
+        for (let x = 0; x < 1000; x++) {
+          geoData.features.push({
+            geometry: {
+              type: 'Point',
+              coordinates: [
+                120.84146 + Math.random() - 0.5,
+                29.65949 + Math.random() - 0.5
+              ]
+            },
+            type: 'Features'
+          });
+        }
         this.myMap2.addSource('data-point', {
           type: 'geojson',
-          data: '//minedata.cn/minemapapi/demo/assets/poi_suzhou.json',
+          // data: '//minedata.cn/minemapapi/demo/assets/poi_suzhou.json',
+          data: geoData,
           cluster: true,
           clusterMaxZoom: 15,
           clusterRadius: 50
