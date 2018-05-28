@@ -73,62 +73,62 @@
     }
   }
 
-  #emergency-info {
-    position: absolute;
-    left: 0;
-    top: 130px;
-    // border: 1px solid red;
-    width: 100%;
-    height: 102px;
-    z-index: 100;
-    display: flex;
-    justify-content: center;
-
-    & > div {
-      position: relative;
-      // border: 1px solid red;
-      width: 320px;
-      height: 100%;
-
-      .title {
-        position: absolute;
-        left: 110px;
-        top: 12px;
-        color: #22d5a1;
-        font-size: 24px;
-        // font-weight: 400;
-      }
-
-      .value {
-        position: absolute;
-        left: 108px;
-        bottom: 8px;
-        width: 100px;
-        height: 50px;
-        color: white;
-        font-size: 32px;
-        font-weight: 400;
-        text-align: center;
-        // border: 1px solid red;
-      }
-    }
-
-    #unit {
-      background: url("../../assets/aboutES/unit.png") no-repeat;
-    }
-
-    #person {
-      background: url("../../assets/aboutES/person.png") no-repeat;
-    }
-
-    #machine {
-      background: url("../../assets/aboutES/machine.png") no-repeat;
-    }
-
-    #team {
-      background: url("../../assets/aboutES/team.png") no-repeat;
-    }
-  }
+  // #emergency-info {
+  //   position: absolute;
+  //   left: 0;
+  //   top: 130px;
+  //   // border: 1px solid red;
+  //   width: 100%;
+  //   height: 102px;
+  //   z-index: 100;
+  //   display: flex;
+  //   justify-content: center;
+  //
+  //   & > div {
+  //     position: relative;
+  //     // border: 1px solid red;
+  //     width: 320px;
+  //     height: 100%;
+  //
+  //     .title {
+  //       position: absolute;
+  //       left: 110px;
+  //       top: 12px;
+  //       color: #22d5a1;
+  //       font-size: 24px;
+  //       // font-weight: 400;
+  //     }
+  //
+  //     .value {
+  //       position: absolute;
+  //       left: 108px;
+  //       bottom: 8px;
+  //       width: 100px;
+  //       height: 50px;
+  //       color: white;
+  //       font-size: 32px;
+  //       font-weight: 400;
+  //       text-align: center;
+  //       // border: 1px solid red;
+  //     }
+  //   }
+  //
+  //   #unit {
+  //     background: url("../../assets/aboutES/unit.png") no-repeat;
+  //   }
+  //
+  //   #person {
+  //     background: url("../../assets/aboutES/person.png") no-repeat;
+  //   }
+  //
+  //   #machine {
+  //     background: url("../../assets/aboutES/machine.png") no-repeat;
+  //   }
+  //
+  //   #team {
+  //     background: url("../../assets/aboutES/team.png") no-repeat;
+  //   }
+  // }
 
   #map {
     position: absolute;
@@ -160,37 +160,47 @@
     z-index: 50;
   }
 
-  #chart1, #chart2 {
+  #chart1, #chart2, #chart3 {
     position: absolute;
     left: 40px;
     width: 429px;
-    height: 340px;
+    height: 300px;
     z-index: 100;
     background: url("../../assets/aboutES/chart.png") no-repeat!important;
   }
 
   #chart1 {
-    top: 300px;
+    bottom: 640px;
   }
   #chart2 {
-    top: 700px;
+    bottom: 340px;
+  }
+  #chart3 {
+    bottom: 40px;
   }
 
-  #title-line1, #title-line2{
+  #title-line1, #title-line2, #title-line3{
     position: absolute;
-    left: 272px;
-    width: 187px;
+    right: 1458px;
     height: 6px;
     z-index: 100;
-    background: url("../../assets/aboutES/title-line.png") no-repeat;
+    background-image: url("../../assets/aboutES/title-line.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%
   }
 
   #title-line1{
-    top: 368px;
+    top: 208px;
+    width: 180px;
   }
 
   #title-line2{
-    top: 768px;
+    top: 508px;
+    width: 146px;
+  }
+  #title-line3{
+    top: 808px;
+    width: 200px;
   }
 
   .blue-circle,
@@ -201,9 +211,9 @@
   }
 
   .yellow-circle {
-    background-color: #f4ad29;
+    background-color: #f56e20;
     border: 1px solid #f8f5eb;
-    box-shadow: 0 0 20px 6px #e8c87a;
+    box-shadow: 0 0 20px 6px #dd9a64;
   }
 
   .blue-circle {
@@ -231,7 +241,7 @@
       // border: 1px solid white;
       .icon {
         position: absolute;
-        left: 18px;
+        left: 30px;
         top: 54px;
         line-height: 100px;
         // border: 1px solid white;
@@ -239,7 +249,7 @@
 
       .title {
         position: absolute;
-        left: 50px;
+        left: 70px;
         top: 14px;
         line-height: 100px;
         color: #24dcb7;

@@ -1,300 +1,605 @@
 <template>
-<div id='app'>
-  <div id='map'></div>
+  <div id='app'>
+    <div id='header'>
+      <div id='title'>长途客运</div>
+      <div id='today'>{{today}}</div>
+    </div>
 
-  <!-- <div class='shadowLayer flexCenter' :class='{hide:isDone}'>资源加载中...</div>
-  <div id='sideMenu'>
-    <div class='menuItem'>
-      <div class='menuTitle'>客流统计</div>
-      <pt-total-count ref='ptTotalCount' style='height:200px;'></pt-total-count>
-    </div>
-    <div class='menuItem'>
-      <div class='menuTitle'>杭州实时流量趋势图</div>
-      <pt-realtime-flow-trend ref='ptRealtimeFlowTrend' style='height:190px;width:100%;'></pt-realtime-flow-trend>
-    </div>
-    <div class='menuItem'>
-      <div class='menuTitle'>全省近7天客流趋势</div>
-      <pt-flow-trend-sevendays ref='ptFlowTrendSevendays' style=' height: 190px;width: 100%;'></pt-flow-trend-sevendays>
-    </div>
-    <div class='menuItem'>
-      <div class='menuTitle'>全省区域客流排名(昨日)</div>
-      <pt-city-flow-rank ref='ptCityFlowRank' style=' height: 190px;width: 100%;'></pt-city-flow-rank>
-    </div>
-  </div>
-  <div id='mainContainer' style='height: 1080px;'>
-    <div id='headBar'>
-      <div style='color:#fff;width: 460px;height: 100%;margin:auto;' class='flexCenter'><span style='font-size: 36px;font-weight: bold;padding:0 14px;'>长途客运</span><span style='font-size: 26px;font-weight: bold;'>{{date}}</span></div>
-    </div>
-    <div id='map'></div>
-    <div id='mapbar'></div>
-    <div id='chartOverview' style='width: 250px;height: 250px;position: absolute;bottom:10px;right:10px; z-index: 10;background-color:rgba(7,2,33,0.7);'></div>
-    <div id='stationDetail' class='panelDetail' :class='{hide:dIsHide}'>
-      <div @click='hideDS()' style='width: 30px;height: 30px;color:#fff;font-size: 40px;line-height: 30px;text-align: center;position:absolute;right:10px;top:10px;z-index: 2;cursor: pointer'>×</div>
-      <div class='stationTitle'>
-        <div class='SDot' style='display:inline-block;vertical-align: text-bottom; position: relative; width: 30px;height: 30px;background-size:100% 100%;' :style='{backgroundImage:' url( '+resource.iconBusRadio+') '}'></div>
-        <div style='display: inline-block;padding-left:10px;color:#fff;font-size: 20px;font-weight: bold;'>{{curStation.name}}</div>
+    <!-- <transition name="switch">
+      <div id='emergency-info' v-show="!showPointInfo">
+        <div id='unit'>
+          <span class="title">应急单位</span>
+          <div class="value">{{emergencyInfo.unit}}</div>
+        </div>
+        <div id='person'>
+          <span class="title">应急人员</span>
+          <div class="value">{{emergencyInfo.person}}</div>
+        </div>
+        <div id='machine'>
+          <span class="title">应急机械</span>
+          <div class="value">{{emergencyInfo.machine}}</div>
+        </div>
+        <div id='team'>
+          <span class="title">应急队伍</span>
+          <div class="value">{{emergencyInfo.team}}</div>
+        </div>
       </div>
-      <div class='blueTitle'>站点流量对比</div>
-      <div style='color: #fff;font-size:18px;'><span>{{curStation.curText}}：</span><span style='color:yellow;padding:0 10px;font-weight: bold;font-family:myDigit;font-size: 26px;letter-spacing: 6px;'>{{curStation.curTotal}}</span><span>人次</span></div>
-      <div style='color: #fff;font-size:18px;'><span>{{curStation.yesText}}：</span><span style='color:yellow;padding:0 10px;font-weight: bold;font-family:myDigit;font-size: 26px;letter-spacing: 6px;'>{{curStation.yesTotal}}</span><span>人次</span></div>
-      <div class='blueTitle'>站点流量趋势图</div>
-      <div id='sChart_ss' style='height: 150px;'></div>
-      <div class='blueTitle'>站点近7天客流趋势</div>
-      <div id='sChart_days' style='height: 150px;'></div>
+    </transition> -->
+
+    <div id='map'></div>
+    <div id='mini-map'></div>
+    <div id='mini-map-ring'></div>
+
+    <div id='chart1'></div>
+    <div id='chart2'></div>
+    <div id='chart3'></div>
+    <div id='title-line1'></div>
+    <div id='title-line2'></div>
+    <div id='title-line3'></div>
+
+    <div id='legend'>
+      <div id='first'>
+        <div class='icon yellow-circle'></div>
+        <div class='title'>站点</div>
+      </div>
+      <div id='second'>
+        <div class='icon blue-circle'></div>
+        <div class='title'>大流量站点</div>
+      </div>
     </div>
-  </div> -->
-  <!--<div class='searchPanel' style='position:absolute;right:60px;top: 10px;'>-->
-  <!--<input type='text' id='search' v-model='keyword' placeholder='请输入客运站名搜索' />-->
-  <!--<button id='btn-search' @click='getStationInfo(keyword)'>搜索</button>-->
-  <!--</div>-->
-</div>
+
+    <div id='point-info-template'>
+      <div class='title'>杭州市交通运输应急抢险与保障中心</div>
+      <div class='sub-title'>杭州市西湖区转塘镇博联村柏树地103号</div>
+      <div class='line'></div>
+      <div class='body'>
+        <div class='item' v-for='(item, index) in pointInfo' :key='index'>
+          <div class='col1' :title="item.phone">{{item.personType}}</div>
+          <div class='col2' :title="item.phone">{{item.personName}}</div>
+          <div class='col3' :title="item.phone">{{item.phone}}</div>
+          <div class='col4' :title="item.phone">{{item.trafficPhone}}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <transition-group name="switch">
+      <div id='table1' key="3" v-show="showPointInfo">
+        <div class='title'>应急队伍</div>
+        <div class='header'>
+          <div class='col1'>队伍名称</div>
+          <div class='col2'>队伍人数</div>
+        </div>
+        <marquee direction="up" scrollamount="2" onmouseover="this.stop();" onmouseout="this.start()" class='body'>
+          <div class='item' v-for='(item, index) in table1Data' :key='index'>
+            <div class='col1' :title="item.emergencyTeamName">{{item.emergencyTeamName}}</div>
+            <div class='col2' :title="item.personNumber">{{item.personNumber}}</div>
+          </div>
+        </marquee>
+      </div>
+      <div id='table2' key="4" v-show="showPointInfo">
+        <div class='title'>应急机械</div>
+        <div class='header'>
+          <div class='col1'>机械名称</div>
+          <div class='col2'>机械人数</div>
+        </div>
+        <marquee direction="up" scrollamount="2" onmouseover="this.stop();" onmouseout="this.start()" class='body'>
+          <div class='item' v-for='(item, index) in table2Data' :key='index'>
+            <div class='col1' :title="item.mechanicalName">{{item.mechanicalName}}</div>
+            <div class='col2' :title="item.number">{{item.number}}</div>
+          </div>
+        </marquee>
+      </div>
+      <div id='table3' key="5" v-show="showPointInfo">
+        <div class='title'>应急物资</div>
+        <div class='header'>
+          <div class='col1'>物资名称</div>
+          <div class='col2'>物资数量</div>
+          <div class='col3'>物资单位</div>
+        </div>
+        <marquee direction="up" scrollamount="2" onmouseover="this.stop();" onmouseout="this.start()" class='body'>
+          <div class='item' v-for='(item, index) in table3Data' :key='index'>
+            <div class='col1' :title="item.materialName | deleteUnit">{{item.materialName | deleteUnit}}</div>
+            <div class='col2' :title="item.number">{{item.number}}</div>
+            <div class='col3' :title="item.materialName | filterUnit">{{item.materialName | filterUnit}}</div>
+          </div>
+        </marquee>
+      </div>
+    </transition-group> -->
+  </div>
 </template>
 
 <script>
-import '../../css/reset.css';
-import '../../css/common.css';
-import './pt.css';
-// import Vue from 'vue';
-import httpApi from '../../js/httpApi';
-import Util from '../../js/util';
-import busStation from '../../js/busStation';
+import './pt.scss';
+// import httpApi from '../../js/httpApi';
+// import Util from '../../js/util';
+// import mapData_zhejiang from '../../assets/mapSource/province/zhejiang.json';
+import esCenter from './esCenter';
+import options from './options.js';
+
 import echarts from 'echarts';
-import mapData_zhejiang from '../../assets/mapSource/province/zhejiang.json';
-// import '../../js/myTheme';
-import '../../../static/myTheme';
-
-import iconBusStation from '../../assets/pt/icon-busStation_n.png';
-import iconBusStation_hot from '../../assets/pt/icon-busStation_hot.png';
-import iconBusRadio from '../../assets/pt/icon-busRadio.png';
-
-import ptFlowTrendSevendays from '../../components/chart/passengerTransport/ptFlowTrendSevendays.vue';
-import ptCityFlowRank from '../../components/chart/passengerTransport/ptCityFlowRank.vue';
-import ptTotalCount from '../../components/chart/passengerTransport/ptTotalCount.vue';
-import ptRealtimeFlowTrend from '../../components/chart/passengerTransport/ptRealtimeFlowTrend.vue';
-
-import areaPosition from './json/areaPosition';
-import overviewOption from './json/overviewOption';
-import curStation from './json/curStation';
-
-echarts.registerMap('ZJ', mapData_zhejiang);
-window.maplet = null;
-
+window.jQuery = window.$ = require('jquery'); // jquery安装3.2.1，最新的3.3.1版本不能与velocity配合，原因不明~~
+require('velocity-animate');
 
 export default {
   name: 'App',
   components: {
-    ptTotalCount,
-    ptFlowTrendSevendays,
-    ptCityFlowRank,
-    ptRealtimeFlowTrend
+
   },
   data() {
     return {
-      myMap: null,
-      resource: {
-        iconBusStation,
-        iconBusStation_hot,
-        iconBusRadio
+      timerForToday: -1,
+      timerForChart: -1,
+      timerForEmergencyInfo: -1,
+
+      today: '',
+
+      emergencyInfo: {
+        unit: 0,
+        person: 0,
+        machine: 0,
+        team: 0
       },
-      overviewChart: null,
-      keyword: '',
-      markerInstance_bus: {},
-      dateTime: Util.getDateByStamp(Date.now(), 'yyyy-MM-dd hh:mm:ss'),
-      date: Util.getDateByStamp(Date.now(), 'yyyy-MM-dd'),
-      curStation: curStation,
-      dIsHide: true,
-      isDone: false
+
+      // showPointInfo: false,
+      // clickOnPointFlag: false,
+      chart1: null,
+      chart2: null,
+      chart3: null,
+
+      pointInfo: [],
+      // markers: [],
+
+      myMap: null,
+      myMap2: null,
+
+      activePoint: {},
+
+      table1Data: [{
+        name: '杭州市jj交通运输应急抢险与保障急抢险与保障中心1',
+        value: 111
+      }, {
+        name: '杭州市jj交通运输应急抢险与保障中心1',
+        value: 222
+      }],
+
+      table2Data: [{
+        name: '航空发动机吹雪车航空发动机吹雪车',
+        value: 111
+      }, {
+        name: '航空发动机吹雪车',
+        value: 222
+      }, {
+        name: '航空发动机吹雪车',
+        value: 333
+      }],
+
+      table3Data: [{
+        name: '编织袋/草包编织袋/草包编织袋/草包',
+        value: 1000,
+        unit: '个'
+      }, {
+        name: '编织袋/草包',
+        value: 10001,
+        unit: '个'
+      }]
     }
   },
-  computed: {
+  filters: {
+    // 删除单位
+    deleteUnit(value) {
+      if (!value) return '';
+      let index = value.indexOf('（');
+      return value.substring(0, index);
+    },
 
-  },
-  watch: {
-    dateTime: function(val) {
-      this.date = val.split(' ')[0];
+    // 过滤出单位
+    filterUnit(value) {
+      if (!value) return '';
+      let begin = value.indexOf('（');
+      let end = value.indexOf('）');
+      return value.substring(begin + 1, end);
     }
   },
   methods: {
+    // 待删---------------
+    getDataForPoint() {
+      let fate = [{
+        id: 'id1',
+        lat: 29.5,
+        lng: 120.6,
+        color: 'blue',
+        info: [{
+          role: '应急负责人',
+          name: '应急负责人1',
+          tel: 13888888881,
+          num: 111111
+        }, {
+          role: '部门负责人',
+          name: '部门负责人1',
+          tel: 13888888882,
+          num: 22222
+        }, {
+          role: '应急联络人',
+          name: '应急联络人1',
+          tel: 13888888883,
+          num: 333333
+        }, {
+          role: '队伍联络人',
+          name: '队伍联络人1',
+          tel: 13888888884,
+          num: 444444
+        }, {
+          role: '物资联络人',
+          name: '物资联络人1',
+          tel: 13888888885,
+          num: 555555
+        }]
+      }, {
+        id: 'id2',
+        lat: 29.65,
+        lng: 120.84146,
+        color: 'blue',
+        info: [{
+          role: '应急负责人',
+          name: '应急负责人1',
+          tel: 13888888881,
+          num: 111111
+        }, {
+          role: '部门负责人',
+          name: '部门负责人1',
+          tel: 13888888882,
+          num: 22222
+        }, {
+          role: '应急联络人',
+          name: '应急联络人1',
+          tel: 13888888883,
+          num: 333333
+        }, {
+          role: '队伍联络人',
+          name: '队伍联络人1',
+          tel: 13888888884,
+          num: 444444
+        }, {
+          role: '物资联络人',
+          name: '物资联络人1',
+          tel: 13888888885,
+          num: 555555
+        }]
+      }, {
+        id: 'id3',
+        lat: 29.8,
+        lng: 120.95,
+        color: 'yellow',
+        info: [{
+          role: '应急负责人',
+          name: '应急负责人1',
+          tel: 1388888888122222,
+          num: 111111
+        }, {
+          role: '部门负责人',
+          name: '部门负责人1',
+          tel: 13888888882,
+          num: 22222
+        }, {
+          role: '应急联络人',
+          name: '应急联络人1',
+          tel: 13888888883,
+          num: 333333
+        }, {
+          role: '队伍联络人',
+          name: '队伍联络人1',
+          tel: 13888888884,
+          num: 444444
+        }, {
+          role: '物资联络人',
+          name: '物资联络人1',
+          tel: 13888888885,
+          num: 555555
+        }]
+      }];
+      return fate;
+    },
+
+    // 初始化地图
     initMap() {
       window.minemap.domainUrl = '//minedata.cn';
       window.minemap.dataDomainUrl = '//datahive.minedata.cn';
       window.minemap.spriteUrl = '//minedata.cn/minemapapi/v1.3/sprite/sprite';
       window.minemap.serviceUrl = '//minedata.cn/service';
       window.minemap.accessToken = '0c95154806ed45369e3858f0c69caa59';
-      window.minemap.solution = 5584;
-      this.myMap = new window.minemap.Map({
-        container: 'map',
-        style: '//minedata.cn/service/solu/style/id/5584',
-        center: [120.84146, 29.65949],
-        zoom: 8,
+      window.minemap.solution = 5594;
+
+      let option = {
+        style: '//minedata.cn/service/solu/style/id/5594',
+        // center: [120.84146, 29.65949],
+        center: [120.04146, 29.65949],
+        zoom: 7,
         pitch: 10,
         // dragRotate: true,
-        maxZoom: 17, // 地图最大缩放级别限制
-        minZoom: 9 // 地图最小缩放级别限制
-      });
-    },
-    init: function() {
-      // let _this = this;
-      // maplet = new Maplet('mapbar'); //挂载地图实例至全局对象
-      // maplet.centerAndZoom(new MPoint(120.84146, 29.65949), 8);
-      // // maplet.setOverviewLocation({
-      // //   type: Maplet.LEFT_BOTTOM
-      // // });
-      // //此处处理老版本地图无法自适应频幕尺寸的问题-----start
-      // let D_mapbar = document.getElementById('mapbar');
-      // maplet.resize(D_mapbar.offsetWidth, D_mapbar.offsetHeight);
-      // window.onresize = function() {
-      //   D_mapbar.style.width = '100%';
-      //   D_mapbar.style.height = 'calc(100% - 62px)';
-      //   maplet.resize(D_mapbar.offsetWidth, D_mapbar.offsetHeight);
-      // }
-      // //此处处理老版本地图无法自适应频幕尺寸的问题-----end
-      // this.curStation.ssChart = echarts.init(document.getElementById('sChart_ss'), 'myTheme');
-      // this.curStation.daysChart = echarts.init(document.getElementById('sChart_days'), 'myTheme');
-      // this.curStation.ssChart.setOption(this.curStation.ssOption);
-      // this.curStation.daysChart.setOption(this.curStation.daysOption);
-    },
-    initOverviewChart: function() {
-      let _this = this;
-      this.overviewChart = echarts.init(document.getElementById('chartOverview'), 'myTheme');
-      this.overviewChart.setOption(overviewOption);
-      this.overviewChart.on('click', function(opt) {
-        if (!opt.data || opt.dataIndex == '-1') {
-          return;
-        }
-        let name = opt.name;
-        // _this.$root.showMap(areaPosition[name]);
-        // maplet.centerAndZoom(new MPoint(areaPosition[name][0], areaPosition[name][1]), 10);
-      });
-      this.getOverviewData();
-    },
-    getOverviewData: function() {
-      let _this = this;
-      httpApi.getPassengerStationStatistics({
-        date: Util.getDateByStamp(Date.now() - 1000 * 60 * 60 * 24, 'yyyy-MM-dd')
-      }).then(res => res.json()).then(res => {
-        if (res.code == '100000' && res.dataBody.detail) {
-          let data = res.dataBody.detail;
-          let arr0 = [],
-            arr1 = [];
-          let rangeArr = [];
-          for (let i = 0, n = data.length; i < n; i++) {
-            let json0 = {},
-              json1 = {};
-            json0.name = data[i].areaName + '市';
-            json0.value = data[i].stationCount;
-            json1.name = data[i].areaName + '市';
-            json1.value = data[i].passengerFlow;
-            arr0.push(json0);
-            arr1.push(json1);
-            rangeArr.push(data[i].stationCount + data[i].passengerFlow);
-          }
-          overviewOption.visualMap.min = Math.min.apply(null, rangeArr);
-          overviewOption.visualMap.max = Math.max.apply(null, rangeArr);
-          overviewOption.series[0].data = arr0;
-          overviewOption.series[1].data = arr1;
-          _this.overviewChart.setOption(overviewOption);
-        }
-      });
-    },
-    watchDate: function() {
-      let _this = this;
-      this.dateTime = Util.getDateByStamp(Date.now(), 'yyyy-MM-dd hh:mm:ss');
-      this.date = Util.getDateByStamp(Date.now(), 'yyyy-MM-dd');
-      setTimeout(_this.watchDate, 1000);
-    },
-    drawBusStationPoint: function() {
-      let _this = this;
-      let stationList = busStation;
-      for (let key in stationList) {
-        let stationArr = stationList[key];
-        for (let i = 0, n = stationArr.length; i < n; i++) {
-          if (stationArr[i].latlon.length) {
-            let busMarker = new MMarker(
-              new MPoint(stationArr[i].latlon[0], stationArr[i].latlon[1]),
-              new MIcon(iconBusStation, 24, 29)
-            );
-            maplet.addOverlay(busMarker);
-            busMarker.areaCode = key;
-            MEvent.addListener(busMarker, 'click', function(e) { //添加marker点击事件
-              _this.getStationInfo(stationArr[i].name, stationArr[i].id);
-            });
-            _this.markerInstance_bus[stationArr[i].id] = busMarker;
-          }
-        }
-      }
-    },
-    getStationInfo: function(zd, code) {
-      let _this = this;
-      if (!zd) {
-        return;
-      }
-      if (code.substr(0, 4) != '0571') {
-        _this.curStation.curText = '昨日总计';
-        _this.curStation.yesText = '前日总计';
-      } else {
-        _this.curStation.curText = '截止目前';
-        _this.curStation.yesText = '昨日同期';
-      }
-      httpApi.getPStationInformation({
-        zd: zd
-      }).then(res => res.json()).then(res => {
-        _this.dIsHide = false;
-        if (res.code == '100000' && res.dataBody) {
-          _this.curStation.name = res.dataBody.stationName || sName;
-          _this.curStation.curTotal = res.dataBody.nowTotalFlow;
-          _this.curStation.yesTotal = res.dataBody.lastTotalFlow;
-          if (res.dataBody.detail && res.dataBody.detail.length > 1) {
-            _this.curStation.ssOption.series[0].data = res.dataBody.detail[0].data;
-            _this.curStation.ssOption.series[1].data = res.dataBody.detail[1].data;
-          } else {
-            _this.curStation.ssOption.series[0].data = [];
-            _this.curStation.ssOption.series[1].data = [];
-          }
+        maxZoom: 15, // 地图最大缩放级别限制
+        minZoom: 3, // 地图最小缩放级别限制
+        logoControl: false
+      };
 
-          let xArr = [],
-            yArr = [];
-          for (let i = 0, n = res.dataBody.daysDetail.length; i < n; i++) {
-            xArr.push(res.dataBody.daysDetail[i].businessDay.substr(4, 2) + '-' + res.dataBody.daysDetail[i].businessDay.substr(6, 2));
-            yArr.push(res.dataBody.daysDetail[i].totalFlow);
-          }
-          _this.curStation.daysOption.xAxis.data = xArr;
-          _this.curStation.daysOption.series[0].data = yArr;
+      option.container = 'map';
+      this.myMap = new window.minemap.Map(option);
+      option.container = 'mini-map';
+      this.myMap2 = new window.minemap.Map(option);
 
+      this.myMap.on('load', () => {
+        // let fate = this.getDataForPoint();
+        // 渲染地图打点；
+        for (let x of esCenter) {
+          let el = document.createElement('div');
+          el.setAttribute('class', x.type === 'dw' ? 'yellow-circle' : 'blue-circle');
 
-          _this.curStation.ssChart.setOption(_this.curStation.ssOption);
-          _this.curStation.daysChart.setOption(_this.curStation.daysOption);
-        } else {
-          _this.curStation.name = '--';
-          _this.curStation.curTotal = 0;
-          _this.curStation.yesTotal = 0;
-          _this.curStation.ssOption.series[1].data = [];
-          _this.curStation.ssOption.series[0].data = [];
-          // _this.curStation.daysOption.xAxis.data =[];
-          _this.curStation.daysOption.series[0].data = [];
-          _this.curStation.ssChart.setOption(_this.curStation.ssOption);
-          _this.curStation.daysChart.setOption(_this.curStation.daysOption);
+          let marker = new minemap.Marker(el, {
+              offset: [2, -5]
+            })
+            .setLngLat([x.longitude, x.latitude])
+            // .setPopup(popup)
+            .addTo(this.myMap);
+
+          // el.addEventListener('mouseenter', (e) => {
+          //   el.style.cursor = 'pointer';
+          // });
+          // el.addEventListener('mouseleave', (e) => {
+          //   el.style.cursor = 'none';
+          // });
+          // el.addEventListener('click', (e) => { // marker的点击事件：出现marker信息的弹框；
+          //   $('#point-info-active').remove();
+          //   // this.clickOnPointFlag = true;
+          //   // console.log('--point');
+          //
+          //   // 获取弹框信息和3个表格的数据信息
+          //   this.$http.post(CONFIG.apiHost + '/RTS/queryEmergencyStationDetail', {unitCode: x.unitCode, sname: x.unitName}).then((res) => {
+          //     if (res.data.code !== '100000') return;
+          //     console.log(res.data.dataBody);
+          //     this.pointInfo = res.data.dataBody.contacts;
+          //     this.$nextTick(() => {
+          //       let popupDom = document.getElementById('point-info-template');
+          //       let popup = new minemap.Popup({
+          //           closeButton: false,
+          //           offset: [17, -10]
+          //         })
+          //         .setHTML('<div id="point-info-active">' + popupDom.innerHTML + '</div>')
+          //         .setLngLat([x.longitude, x.latitude])
+          //         .addTo(this.myMap);
+          //       // .setText(x.info);
+          //       // marker.setPopup(popup);
+          //     });
+          //
+          //     this.table1Data = res.data.dataBody.team;
+          //     this.table2Data = res.data.dataBody.machinery;
+          //     this.table3Data = res.data.dataBody.supplies;
+          //   });
+          // });
         }
+
+        // 聚合点渲染
+        let geoData = { // 创建聚合点的geojson；
+          type: 'FeatureCollection',
+          features: []
+        };
+        for (let x of esCenter) {
+          geoData.features.push({
+            geometry: {
+              type: 'Point',
+              coordinates: [
+                x.longitude,
+                x.latitude
+              ]
+            },
+            type: 'Features'
+          });
+        }
+
+        // 根据geojson创建数据源
+        this.myMap2.addSource('data-point', {
+          type: 'geojson',
+          // data: '//minedata.cn/minemapapi/demo/assets/poi_suzhou.json',
+          data: geoData,
+          cluster: true,
+          clusterMaxZoom: 15,
+          clusterRadius: 50
+        });
+
+        // 根据数据源，添加非聚合图层
+        // this.myMap2.addLayer({
+        //   'id': 'unclustered-points',
+        //   'type': 'symbol',
+        //   'source': 'data-point',
+        //   'filter': ['!has', 'point_count'],
+        //   'layout': {
+        //     'icon-image': 'bank-15'
+        //   }
+        // });
+        this.myMap2.addLayer({
+          'id': 'unclustered-points',
+          'type': 'circle',
+          'source': 'data-point',
+          'filter': ['!has', 'point_count'],
+          'paint': {
+            'circle-color': '#23d3a1',
+            'circle-radius': 12
+          },
+        });
+
+        // 根据数据源，添加非聚合数量图层
+        this.myMap2.addLayer({
+          'id': 'unclustered-count',
+          'type': 'symbol',
+          'source': 'data-point',
+          'layout': {
+            'text-field': '1',
+            'text-size': 14
+          },
+          'paint': {
+            'text-color': 'black'
+          },
+          'filter': ['!has', 'point_count']
+        });
+
+        // 根据数据源，添加聚合图层
+        // let layers = [
+        //   [1000, '#f28cb1'],
+        //   [100, '#f1f075'],
+        //   [0, '#51bbd6']
+        // ];
+        let layers = [
+          [1000, '#23d3a1'],
+          [100, '#23d3a1'],
+          [0, '#23d3a1']
+        ];
+        layers.forEach((layer, i) => {
+          this.myMap2.addLayer({
+            'id': 'cluster-' + i,
+            'type': 'circle',
+            'source': 'data-point',
+            'paint': {
+              'circle-color': layer[1],
+              'circle-radius': 12
+            },
+            'filter': i === 0 ? ['>=', 'point_count', layer[0]] : ['all', ['>=', 'point_count', layer[0]],
+              ['<', 'point_count', layers[i - 1][0]]
+            ]
+          });
+        });
+
+        // 根据数据源，添加聚合数量图层
+        this.myMap2.addLayer({
+          'id': 'cluster-count',
+          'type': 'symbol',
+          'source': 'data-point',
+          'layout': {
+            'text-field': '{point_count}',
+            'text-size': 14
+          },
+          'paint': {
+            'text-color': 'black'
+          },
+          'filter': ['has', 'point_count']
+        });
       });
+
+      // 根据大地图的鼠标操控，来同步mini地图的中心坐标和缩放
+      this.myMap.on('moveend', (e) => {
+        // console.log(e.target.transform); // minemap实例的信息都存放在e.target.transform里面
+        this.myMap2.flyTo({
+          center: [e.target.transform._center.lng, e.target.transform._center.lat],
+          speed: 1,
+          zoom: e.target.transform._zoom
+        });
+      });
+
+      // // 用来分析鼠标单击在marker上，还是marker以外的地图区域上，以此来响应3个表格的显示/隐藏状态
+      // this.myMap.on('click', (e) => {
+      //   console.log('--map');
+      //   if (!this.clickOnPointFlag) {
+      //     this.showPointInfo = false;
+      //   } else {
+      //     this.showPointInfo = true;
+      //   }
+      //   this.clickOnPointFlag = false;
+      // });
     },
-    hideDS: function() {
-      this.dIsHide = true;
+
+    // 初始化echarts图表
+    initChart() {
+      this.chart1 = echarts.init(document.getElementById('chart1'));  // 中心统计图表
+      this.chart2 = echarts.init(document.getElementById('chart2'));  // 机械统计图表
+      this.chart3 = echarts.init(document.getElementById('chart3'));  // 机械统计图表
+
+      this.getDataAndRenderChart();
+      this.timerForChart = setInterval(() => {
+        this.getDataAndRenderChart();
+      }, 300000);
+    },
+
+    // 获取数据，并渲染echarts图表
+    getDataAndRenderChart() {
+      this.chart1.setOption(options.lineOption);
+      this.chart2.setOption(options.lineOption);
+      this.chart3.setOption(options.barOption);
+      // // 中心统计图表渲染
+      // this.$http.get(CONFIG.apiHost + '/RTS/queryEmergencyStationByUnitType').then((res) => {
+      //   if (res.data.code !== '100000') return;
+      //   console.log(res.data.dataBody);
+      //   let myOption = JSON.parse(JSON.stringify(options));
+      //   myOption.xAxis.data = res.data.dataBody.map((item) => {
+      //     return item.areaName;
+      //   });
+      //   myOption.series[0].data = res.data.dataBody.map((item) => {
+      //     return item.detail[0].count;
+      //   });
+      //   myOption.series[1].data = res.data.dataBody.map((item) => {
+      //     return item.detail[1].count;
+      //   });
+      //   this.chart1.clear();
+      //   this.chart1.setOption(myOption);
+      // });
+      //
+      // // 机械统计图表渲染
+      // this.$http.get(CONFIG.apiHost + '/RTS/queryEmergencyMachineryByUnitType').then((res) => {
+      //   if (res.data.code !== '100000') return;
+      //   console.log(res.data.dataBody);
+      //   let myOption = JSON.parse(JSON.stringify(options));
+      //   myOption.xAxis.data = res.data.dataBody.map((item) => {
+      //     return item.areaName;
+      //   });
+      //   myOption.series[0].data = res.data.dataBody.map((item) => {
+      //     return item.detail[0].count;
+      //   });
+      //   myOption.series[1].data = res.data.dataBody.map((item) => {
+      //     return item.detail[1].count;
+      //   });
+      //   this.chart2.clear();
+      //   this.chart2.setOption(myOption);
+      // });
+    },
+
+    // 获取数据，并渲染应急信息
+    getDataAndRenderForEmergencyInfo() {
+      this.$http.get(CONFIG.apiHost + '/RTS/querySummaryOfEmergencyMaterials').then((res) => {
+        if (res.data.code !== '100000') return;
+        this.emergencyInfo = {
+          unit: res.data.dataBody[0].cCount,
+          person: res.data.dataBody[0].pCount,
+          machine: res.data.dataBody[0].eCount,
+          team: res.data.dataBody[0].tCount
+        }
+      })
     }
   },
-  mounted: function() {
-    this.isDone = true;
-    this.initMap();
-    this.$http.get(CONFIG.apiHost + '/RTS/queryPassengerStationStatistics').then((res) => {
-      res.data.code === '100000' && console.log(res.data.dataBody);
-    });
+  mounted() {
+    this.$nextTick(() => {
+      this.initMap();
+      this.initChart();
 
-    this.$http.get(`${CONFIG.apiHost}/RTS/queryPassengerStationInformation?zd=05771`).then((res) => {
-      console.log(res.data);
+      this.today = new Date().pattern('yyyy年MM月dd日 EEE HH:mm:ss');
+      this.timerForToday = setInterval(() => {
+        this.today = new Date().pattern('yyyy年MM月dd日 EEE HH:mm:ss');
+      }, 1000);
+
+      this.getDataAndRenderForEmergencyInfo();
+      this.timerForEmergencyInfo = setInterval(() => {
+        this.getDataAndRenderForEmergencyInfo();
+      }, 300000);
     });
-    // this.init();
-    // this.initOverviewChart();
-    // this.watchDate();
-    // this.drawBusStationPoint();
+  },
+  beforeDestroy() {
+    if (this.chart1) {
+      this.chart1.dispose();
+    }
+    if (this.chart2) {
+      this.chart2.dispose();
+    }
+    if (this.chart3) {
+      this.chart3.dispose();
+    }
+    clearInterval(this.timerForToday);
+    clearInterval(this.timerForChart);
+    clearInterval(this.timerForEmergencyInfo);
   }
 }
 </script>

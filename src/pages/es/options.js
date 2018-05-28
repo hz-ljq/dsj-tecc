@@ -77,13 +77,30 @@ let option = {
       type: 'bar',
       barWidth: 10,
       barGap: 0.12,
-      data: [18203, 23489, 29034, 104970, 131744, 630230]
+      data: [18203, 23489, 29034, 104970, 131744, 630230],
+      label: {
+        normal: {
+          show: true,
+          offset: [4, 0],
+          position: 'top',
+          // position: ['-0%', '-10%'],
+          align: 'right'
+        }
+      }
     },
     {
       name: '高速公路经营单位',
       type: 'bar',
       barWidth: 10,
-      data: [19325, 23438, 31000, 121594, 134141, 681807]
+      data: [19325, 23438, 31000, 121594, 134141, 681807],
+      label: {
+        normal: {
+          show: true,
+          offset: [-3, 0],
+          position: 'top',
+          align: 'left'
+        }
+      }
     }
   ]
 };

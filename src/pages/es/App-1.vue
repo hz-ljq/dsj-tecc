@@ -33,6 +33,8 @@
     <transition-group name="switch">
       <div id='chart1' key="1" v-show="!showPointInfo"></div>
       <div id='chart2' key="2" v-show="!showPointInfo"></div>
+      <div id='title-line1' key="3" v-show="!showPointInfo"></div>
+      <div id='title-line2' key="4" v-show="!showPointInfo"></div>
     </transition-group>
 
     <div id='legend'>
@@ -62,7 +64,7 @@
     </div>
 
     <transition-group name="switch">
-      <div id='table1' key="3" v-show="showPointInfo">
+      <div id='table1' key="11" v-show="showPointInfo">
         <div class='title'>应急队伍</div>
         <div class='header'>
           <div class='col1'>队伍名称</div>
@@ -75,7 +77,7 @@
           </div>
         </marquee>
       </div>
-      <div id='table2' key="4" v-show="showPointInfo">
+      <div id='table2' key="22" v-show="showPointInfo">
         <div class='title'>应急机械</div>
         <div class='header'>
           <div class='col1'>机械名称</div>
@@ -88,7 +90,7 @@
           </div>
         </marquee>
       </div>
-      <div id='table3' key="5" v-show="showPointInfo">
+      <div id='table3' key="33" v-show="showPointInfo">
         <div class='title'>应急物资</div>
         <div class='header'>
           <div class='col1'>物资名称</div>
@@ -309,8 +311,9 @@ export default {
 
       let option = {
         style: '//minedata.cn/service/solu/style/id/5594',
-        center: [120.84146, 29.65949],
-        zoom: 8,
+        // center: [120.84146, 29.65949],
+        center: [120.04146, 29.65949],
+        zoom: 7,
         pitch: 10,
         // dragRotate: true,
         maxZoom: 15, // 地图最大缩放级别限制
@@ -518,34 +521,36 @@ export default {
       this.$http.get(CONFIG.apiHost + '/RTS/queryEmergencyStationByUnitType').then((res) => {
         if (res.data.code !== '100000') return;
         console.log(res.data.dataBody);
-        options.xAxis.data = res.data.dataBody.map((item) => {
+        let myOption = JSON.parse(JSON.stringify(options));
+        myOption.xAxis.data = res.data.dataBody.map((item) => {
           return item.areaName;
         });
-        options.series[0].data = res.data.dataBody.map((item) => {
+        myOption.series[0].data = res.data.dataBody.map((item) => {
           return item.detail[0].count;
         });
-        options.series[1].data = res.data.dataBody.map((item) => {
+        myOption.series[1].data = res.data.dataBody.map((item) => {
           return item.detail[1].count;
         });
         this.chart1.clear();
-        this.chart1.setOption(options);
+        this.chart1.setOption(myOption);
       });
 
       // 机械统计图表渲染
       this.$http.get(CONFIG.apiHost + '/RTS/queryEmergencyMachineryByUnitType').then((res) => {
         if (res.data.code !== '100000') return;
         console.log(res.data.dataBody);
-        options.xAxis.data = res.data.dataBody.map((item) => {
+        let myOption = JSON.parse(JSON.stringify(options));
+        myOption.xAxis.data = res.data.dataBody.map((item) => {
           return item.areaName;
         });
-        options.series[0].data = res.data.dataBody.map((item) => {
+        myOption.series[0].data = res.data.dataBody.map((item) => {
           return item.detail[0].count;
         });
-        options.series[1].data = res.data.dataBody.map((item) => {
+        myOption.series[1].data = res.data.dataBody.map((item) => {
           return item.detail[1].count;
         });
         this.chart2.clear();
-        this.chart2.setOption(options);
+        this.chart2.setOption(myOption);
       });
     },
 
@@ -567,10 +572,10 @@ export default {
       this.initMap();
       this.initChart();
 
-      this.today = new Date().pattern('yyyy年MM月dd日 EEE');
+      this.today = new Date().pattern('yyyy年MM月dd日 EEE HH:mm:ss');
       this.timerForToday = setInterval(() => {
-        this.today = new Date().pattern('yyyy年MM月dd日 EEE');
-      }, 60000);
+        this.today = new Date().pattern('yyyy年MM月dd日 EEE HH:mm:ss');
+      }, 1000);
 
       this.getDataAndRenderForEmergencyInfo();
       this.timerForEmergencyInfo = setInterval(() => {
