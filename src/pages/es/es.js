@@ -9,6 +9,7 @@
  import App from './App-1'
  // import router from './router'
  import axios from 'axios'
+ import '../../js-lib/DateUtil'
  Vue.prototype.$http = axios;
 
  Vue.config.productionTip = false

@@ -1,9 +1,39 @@
+.switch-enter-active {
+  animation: switch-in 1s;
+}
+
+.switch-leave-active {
+  animation: switch-out 0.6s;
+}
+@keyframes switch-in {
+  0% {
+    transform: translateX(-150px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0px);
+    opacity: 1;
+  }
+}
+@keyframes switch-out {
+  0% {
+    transform: translateY(0px);
+    opacity: 0.2;
+  }
+
+  100% {
+    transform: translateY(150px);
+    opacity: 0;
+  }
+}
+
 #app {
   position: relative;
   width: 1920px;
   height: 1080px;
   overflow: hidden;
-
+  // background-color: black;
   & * {
     // transition: all 1s;
     box-sizing: border-box;
@@ -11,17 +41,92 @@
 
   #header {
     position: absolute;
-    border: 1px solid red;
-    width: 200px;
-    height: 100px;
-    left: 1700px;
-    top: 100px;
+    // border: 1px solid red;
+    width: 100%;
+    height: 81px;
+    left: 0;
+    top: 0;
     z-index: 100;
+    background: url("../../assets/aboutES/head.png") no-repeat;
 
     #title {
       position: absolute;
+      top: 10px;
+      width: 100%;
       color: white;
-      font-size: 30px;
+      font-size: 34px;
+      font-weight: 900;
+      text-align: center;
+      letter-spacing: 6px;
+    }
+
+    #today {
+      position: absolute;
+      left: 390px;
+      top: 18px;
+      width: 400px;
+      height: 40px;
+      color: white;
+      font-size: 18px;
+      font-weight: 400;
+      // border: 1px solid red;
+    }
+  }
+
+  #emergency-info {
+    position: absolute;
+    left: 0;
+    top: 130px;
+    // border: 1px solid red;
+    width: 100%;
+    height: 102px;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+
+    & > div {
+      position: relative;
+      // border: 1px solid red;
+      width: 320px;
+      height: 100%;
+
+      .title {
+        position: absolute;
+        left: 110px;
+        top: 12px;
+        color: #22d5a1;
+        font-size: 24px;
+        // font-weight: 400;
+      }
+
+      .value {
+        position: absolute;
+        left: 108px;
+        bottom: 8px;
+        width: 100px;
+        height: 50px;
+        color: white;
+        font-size: 32px;
+        font-weight: 400;
+        text-align: center;
+        // border: 1px solid red;
+      }
+    }
+
+    #unit {
+      background: url("../../assets/aboutES/unit.png") no-repeat;
+    }
+
+    #person {
+      background: url("../../assets/aboutES/person.png") no-repeat;
+    }
+
+    #machine {
+      background: url("../../assets/aboutES/machine.png") no-repeat;
+    }
+
+    #team {
+      background: url("../../assets/aboutES/team.png") no-repeat;
     }
   }
 
@@ -31,39 +136,53 @@
     height: 1080px;
   }
 
-  #map-small {
+  #mini-map {
     position: absolute;
-    right: 20px;
-    bottom: 0;
-    width: 300px;
-    height: 300px;
-    border-radius: 150px;
-    border: 1px solid yellow;
+    right: 69px;
+    bottom: 66px;
+    width: 168px;
+    height: 168px;
+    border-radius: 84px; // border: 1px solid yellow;
+    z-index: 100;
+  }
+
+  #mini-map-ring {
+    position: absolute;
+    right: 40px;
+    bottom: 40px;
+    width: 223px;
+    height: 257px;
+    // border-radius: 150px;
+    // border: 1px solid yellow;
+    background: url("../../assets/aboutES/mini-map-ring.png") no-repeat;
+    z-index: 50;
   }
 
   #chart1 {
     position: absolute;
-    left: 100px;
+    left: 40px;
     top: 300px;
-    width: 500px;
-    height: 320px;
+    width: 429px;
+    height: 340px;
     z-index: 100;
+    background: url("../../assets/aboutES/chart.png") no-repeat!important;
   }
 
   #chart2 {
     position: absolute;
-    left: 100px;
+    left: 40px;
     top: 700px;
-    width: 500px;
-    height: 320px;
+    width: 429px;
+    height: 340px;
     z-index: 100;
+    background: url("../../assets/aboutES/chart.png") no-repeat!important;
   }
 
   .blue-circle,
   .yellow-circle {
-    width: 30px;
-    height: 30px;
-    border-radius: 15px;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
   }
 
   .yellow-circle {
@@ -80,12 +199,13 @@
 
   #legend {
     position: absolute;
-    right: 20px;
-    top: 540px;
-    width: 300px;
-    height: 200px;
-    border: 1px solid red;
+    right: 80px;
+    top: 620px;
+    width: 172px;
+    height: 149px;
+    // border: 1px solid red;
     z-index: 100;
+    background: url("../../assets/aboutES/legend.png") no-repeat;
 
     #first,
     #second {
@@ -96,20 +216,20 @@
       // border: 1px solid white;
       .icon {
         position: absolute;
-        left: 20px;
-        top: 32px;
+        left: 18px;
+        top: 54px;
         line-height: 100px;
         // border: 1px solid white;
       }
 
       .title {
         position: absolute;
-        left: 70px;
-        top: -3px;
+        left: 50px;
+        top: 14px;
         line-height: 100px;
         color: #24dcb7;
-        font-size: 22px;
-        font-weight: 400;
+        font-size: 14px;
+        font-weight: 300;
       }
     }
 
@@ -118,12 +238,13 @@
     }
 
     #second {
-      top: 100px;
+      top: 50px;
     }
   }
 
   .minemap-popup-content {
     background: none;
+    pointer-events: none;
   }
 
   .minemap-popup-tip {
@@ -137,6 +258,7 @@
   #point-info-active,
   #point-info-template {
     pointer-events: none;
+    border-radius: 6px;
     position: absolute;
     // left: 500px;
     // top: 200px;
@@ -215,6 +337,9 @@
         & > * {
           position: absolute;
           height: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
 
         .col1 {
@@ -245,31 +370,48 @@
     }
   }
 
-  #table1{
-    top: 300px;
+  #table1 {
+    bottom: 620px;
   }
-  #table2{
-    top: 560px;
+
+  #table2 {
+    bottom: 320px;
   }
-  #table1, #table2 {
+
+  #table1,
+  #table2 {
     // pointer-events: none;
     position: absolute;
     left: 50px;
-    width: 360px;
-    height: 240px;
+    width: 429px;
+    height: 300px;
     z-index: 100;
     color: white;
-    border: 1px solid red;
+    // border: 1px solid red;
+    background: url("../../assets/aboutES/chart.png") no-repeat;
+
+    & > .title {
+      position: absolute;
+      top: 20px;
+      left: 10px;
+      width: 26px;
+      height: 112px;
+      line-height: 28px;
+      color: white;
+      font-size: 24px;
+      // border: 1px solid red;
+    }
 
     & > .header {
       position: absolute;
-      top: 0;
-      width: 100%;
+      top: 36px;
+      left: 42px;
+      width: 387px;
       height: 40px;
       line-height: 40px;
       border-bottom: 1px solid #5fb9fc;
       text-align: center;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 400;
       // letter-spacing: 0px;
       .col1 {
@@ -288,10 +430,10 @@
     & > .body {
       // border: 1px solid red;
       position: absolute;
-      // left: 1%;
-      top: 40px;
-      width: 100%;
-      height: 196px;
+      top: 90px;
+      left: 42px;
+      width: 387px;
+      height: 200px;
       // line-height: 30px;
       font-size: 14px;
       font-weight: 300;
@@ -305,11 +447,13 @@
         height: 33px;
         line-height: 33px;
 
-        .col1, .col2{
+        .col1,
+        .col2 {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
         }
+
         .col1 {
           position: absolute;
           left: 10px;
@@ -329,22 +473,36 @@
     // pointer-events: none;
     position: absolute;
     left: 50px;
-    top: 820px;
-    width: 360px;
-    height: 240px;
+    bottom: 20px;
+    width: 429px;
+    height: 300px;
     z-index: 100;
     color: white;
-    border: 1px solid red;
+    // border: 1px solid red;
+    background: url("../../assets/aboutES/chart.png") no-repeat;
+
+    & > .title {
+      position: absolute;
+      top: 20px;
+      left: 10px;
+      width: 26px;
+      height: 112px;
+      line-height: 28px;
+      color: white;
+      font-size: 24px;
+      // border: 1px solid red;
+    }
 
     & > .header {
       position: absolute;
-      top: 0;
-      width: 100%;
+      top: 36px;
+      left: 42px;
+      width: 387px;
       height: 40px;
       line-height: 40px;
       border-bottom: 1px solid #5fb9fc;
       text-align: center;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 400;
       // letter-spacing: 0px;
       .col1 {
@@ -352,11 +510,13 @@
         left: 10px;
         width: 150px;
       }
+
       .col2 {
         position: absolute;
         left: 160px;
         width: 100px;
       }
+
       .col3 {
         position: absolute;
         left: 260px;
@@ -367,11 +527,10 @@
     & > .body {
       // border: 1px solid red;
       position: absolute;
-      // left: 1%;
-      top: 40px;
-      width: 100%;
-      height: 196px;
-      // line-height: 30px;
+      top: 90px;
+      left: 42px;
+      width: 387px;
+      height: 200px;
       font-size: 14px;
       font-weight: 300;
       text-align: center;
@@ -384,21 +543,26 @@
         height: 33px;
         line-height: 33px;
 
-        .col1, .col2, .col3{
+        .col1,
+        .col2,
+        .col3 {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
         }
+
         .col1 {
           position: absolute;
           left: 10px;
           width: 150px;
         }
+
         .col2 {
           position: absolute;
           left: 160px;
           width: 100px;
         }
+
         .col3 {
           position: absolute;
           left: 260px;

@@ -1,97 +1,121 @@
 <template>
-<div id='app'>
-  <div id='header'>
-    <div id='title'>应急资源</div>
-    <div id='time'></div>
-  </div>
-
-  <div id='map'></div>
-  <div id='map-small'></div>
-
-  <div id='chart1' v-show="false"></div>
-  <div id='chart2' v-show="false"></div>
-
-  <div id='info'></div>
-
-  <div id='legend'>
-    <div id='first'>
-      <div class='icon yellow-circle'></div>
-      <div class='title'>公路管理机构</div>
+  <div id='app'>
+    <div id='header'>
+      <div id='title'>应急资源</div>
+      <div id='today'>{{today}}</div>
     </div>
-    <div id='second'>
-      <div class='icon blue-circle'></div>
-      <div class='title'>高速公路经营单位</div>
-    </div>
-  </div>
 
-  <div id='point-info-template'>
-    <div class='title'>杭州市交通运输应急抢险与保障中心</div>
-    <div class='sub-title'>杭州市西湖区转塘镇博联村柏树地103号</div>
-    <div class='line'></div>
-    <div class='body'>
-      <div class='item' v-for='(item, index) in pointInfo' :key='index'>
-        <div class='col1'>{{item.role}}</div>
-        <div class='col2'>{{item.name}}</div>
-        <div class='col3'>{{item.tel}}</div>
-        <div class='col4'>{{item.num}}</div>
+    <transition name="switch">
+      <div id='emergency-info' v-show="!showPointInfo">
+        <div id='unit'>
+          <span class="title">应急单位</span>
+          <div class="value">{{emergencyInfo.unit}}</div>
+        </div>
+        <div id='person'>
+          <span class="title">应急人员</span>
+          <div class="value">{{emergencyInfo.person}}</div>
+        </div>
+        <div id='machine'>
+          <span class="title">应急机械</span>
+          <div class="value">{{emergencyInfo.machine}}</div>
+        </div>
+        <div id='team'>
+          <span class="title">应急队伍</span>
+          <div class="value">{{emergencyInfo.team}}</div>
+        </div>
+      </div>
+    </transition>
+
+    <div id='map'></div>
+    <div id='mini-map'></div>
+    <div id='mini-map-ring'></div>
+
+    <transition-group name="switch">
+      <div id='chart1' key="1" v-show="!showPointInfo"></div>
+      <div id='chart2' key="2" v-show="!showPointInfo"></div>
+    </transition-group>
+
+    <div id='legend'>
+      <div id='first'>
+        <div class='icon yellow-circle'></div>
+        <div class='title'>公路管理机构</div>
+      </div>
+      <div id='second'>
+        <div class='icon blue-circle'></div>
+        <div class='title'>高速公路经营单位</div>
       </div>
     </div>
-    <!-- <div class='triangle-down'></div> -->
-  </div>
 
-  <div id='table1'>
-    <div class='header'>
-      <div class='col1'>队伍名称</div>
-      <div class='col2'>队伍人数</div>
-    </div>
-    <marquee direction="up" scrollamount="2" onmouseover="this.stop();" onmouseout="this.start()" class='body'>
-      <div class='item' v-for='(item, index) in table1Data' :key='index'>
-        <div class='col1' :title="item.name">{{item.name}}</div>
-        <div class='col2' :title="item.value">{{item.value}}</div>
+    <div id='point-info-template'>
+      <div class='title'>杭州市交通运输应急抢险与保障中心</div>
+      <div class='sub-title'>杭州市西湖区转塘镇博联村柏树地103号</div>
+      <div class='line'></div>
+      <div class='body'>
+        <div class='item' v-for='(item, index) in pointInfo' :key='index'>
+          <div class='col1' :title="item.phone">{{item.personType}}</div>
+          <div class='col2' :title="item.phone">{{item.personName}}</div>
+          <div class='col3' :title="item.phone">{{item.phone}}</div>
+          <div class='col4' :title="item.phone">{{item.trafficPhone}}</div>
+        </div>
       </div>
-    </marquee>
-  </div>
-  <div id='table2'>
-    <div class='header'>
-      <div class='col1'>机械名称</div>
-      <div class='col2'>机械人数</div>
+      <!-- <div class='triangle-down'></div> -->
     </div>
-    <marquee direction="up" scrollamount="2" onmouseover="this.stop();" onmouseout="this.start()" class='body'>
-      <div class='item' v-for='(item, index) in table2Data' :key='index'>
-        <div class='col1' :title="item.name">{{item.name}}</div>
-        <div class='col2' :title="item.value">{{item.value}}</div>
+
+    <transition-group name="switch">
+      <div id='table1' key="3" v-show="showPointInfo">
+        <div class='title'>应急队伍</div>
+        <div class='header'>
+          <div class='col1'>队伍名称</div>
+          <div class='col2'>队伍人数</div>
+        </div>
+        <marquee direction="up" scrollamount="2" onmouseover="this.stop();" onmouseout="this.start()" class='body'>
+          <div class='item' v-for='(item, index) in table1Data' :key='index'>
+            <div class='col1' :title="item.emergencyTeamName">{{item.emergencyTeamName}}</div>
+            <div class='col2' :title="item.personNumber">{{item.personNumber}}</div>
+          </div>
+        </marquee>
       </div>
-    </marquee>
-  </div>
-  <div id='table3'>
-    <div class='header'>
-      <div class='col1'>物资名称</div>
-      <div class='col2'>物资数量</div>
-      <div class='col3'>物资单位</div>
-    </div>
-    <marquee direction="up" scrollamount="2" onmouseover="this.stop();" onmouseout="this.start()" class='body'>
-      <div class='item' v-for='(item, index) in table3Data' :key='index'>
-        <div class='col1' :title="item.name">{{item.name}}</div>
-        <div class='col2' :title="item.value">{{item.value}}</div>
-        <div class='col3' :title="item.unit">{{item.unit}}</div>
+      <div id='table2' key="4" v-show="showPointInfo">
+        <div class='title'>应急机械</div>
+        <div class='header'>
+          <div class='col1'>机械名称</div>
+          <div class='col2'>机械人数</div>
+        </div>
+        <marquee direction="up" scrollamount="2" onmouseover="this.stop();" onmouseout="this.start()" class='body'>
+          <div class='item' v-for='(item, index) in table2Data' :key='index'>
+            <div class='col1' :title="item.mechanicalName">{{item.mechanicalName}}</div>
+            <div class='col2' :title="item.number">{{item.number}}</div>
+          </div>
+        </marquee>
       </div>
-    </marquee>
+      <div id='table3' key="5" v-show="showPointInfo">
+        <div class='title'>应急物资</div>
+        <div class='header'>
+          <div class='col1'>物资名称</div>
+          <div class='col2'>物资数量</div>
+          <div class='col3'>物资单位</div>
+        </div>
+        <marquee direction="up" scrollamount="2" onmouseover="this.stop();" onmouseout="this.start()" class='body'>
+          <div class='item' v-for='(item, index) in table3Data' :key='index'>
+            <div class='col1' :title="item.materialName | deleteUnit">{{item.materialName | deleteUnit}}</div>
+            <div class='col2' :title="item.number">{{item.number}}</div>
+            <div class='col3' :title="item.materialName | filterUnit">{{item.materialName | filterUnit}}</div>
+          </div>
+        </marquee>
+      </div>
+    </transition-group>
   </div>
-
-
-
-</div>
 </template>
 
 <script>
 import './es.scss';
 // import httpApi from '../../js/httpApi';
 // import Util from '../../js/util';
-// import esCenter from '../../js/esCenter';
-import echarts from 'echarts';
-import mapData_zhejiang from '../../assets/mapSource/province/zhejiang.json';
-
+// import mapData_zhejiang from '../../assets/mapSource/province/zhejiang.json';
+import esCenter from './esCenter';
 import options from './options.js';
+
+import echarts from 'echarts';
 window.jQuery = window.$ = require('jquery'); // jquery安装3.2.1，最新的3.3.1版本不能与velocity配合，原因不明~~
 require('velocity-animate');
 
@@ -102,11 +126,26 @@ export default {
   },
   data() {
     return {
+      timerForToday: -1,
+      timerForChart: -1,
+      timerForEmergencyInfo: -1,
+
+      today: '',
+
+      emergencyInfo: {
+        unit: 0,
+        person: 0,
+        machine: 0,
+        team: 0
+      },
+
+      showPointInfo: false,
+      clickOnPointFlag: false,
       chart1: null,
       chart2: null,
 
       pointInfo: [],
-      markers: [],
+      // markers: [],
 
       myMap: null,
       myMap2: null,
@@ -119,27 +158,6 @@ export default {
       }, {
         name: '杭州市jj交通运输应急抢险与保障中心1',
         value: 222
-      }, {
-        name: '杭州市jj交通运输应急抢险与保障中心1',
-        value: 333
-      }, {
-        name: '杭州市jj交通运输应急抢险与保障中心1',
-        value: 444
-      }, {
-        name: '杭州市jj交通运输应急抢险与保障中心1',
-        value: 555
-      }, {
-        name: '杭州市jj交通运输应急抢险与保障中心1',
-        value: 666
-      }, {
-        name: '杭州市jj交通运输应急抢险与保障中心1',
-        value: 777
-      }, {
-        name: '杭州市jj交通运输应急抢险与保障中心1',
-        value: 888
-      }, {
-        name: '杭州市jj交通运输应急抢险与保障中心1',
-        value: 999
       }],
 
       table2Data: [{
@@ -151,24 +169,6 @@ export default {
       }, {
         name: '航空发动机吹雪车',
         value: 333
-      }, {
-        name: '航空发动机吹雪车',
-        value: 444
-      }, {
-        name: '航空发动机吹雪车',
-        value: 555
-      }, {
-        name: '航空发动机吹雪车',
-        value: 666
-      }, {
-        name: '航空发动机吹雪车',
-        value: 777
-      }, {
-        name: '航空发动机吹雪车',
-        value: 888
-      }, {
-        name: '航空发动机吹雪车',
-        value: 999
       }],
 
       table3Data: [{
@@ -179,34 +179,27 @@ export default {
         name: '编织袋/草包',
         value: 10001,
         unit: '个'
-      }, {
-        name: '编织袋/草包',
-        value: 1200,
-        unit: '个'
-      }, {
-        name: '编织袋/草包',
-        value: 100,
-        unit: '个'
-      }, {
-        name: '编织袋/草包',
-        value: 10,
-        unit: '个'
-      }, {
-        name: '编织袋/草包',
-        value: 3000,
-        unit: '个'
-      }, {
-        name: '编织袋/草包',
-        value: 1800,
-        unit: '个'
-      }, {
-        name: '编织袋/草包',
-        value: 1020,
-        unit: '个'
-      }, ]
+      }]
+    }
+  },
+  filters: {
+    // 删除单位
+    deleteUnit(value) {
+      if (!value) return '';
+      let index = value.indexOf('（');
+      return value.substring(0, index);
+    },
+
+    // 过滤出单位
+    filterUnit(value) {
+      if (!value) return '';
+      let begin = value.indexOf('（');
+      let end = value.indexOf('）');
+      return value.substring(begin + 1, end);
     }
   },
   methods: {
+    // 待删---------------
     getDataForPoint() {
       let fate = [{
         id: 'id1',
@@ -304,6 +297,8 @@ export default {
       }];
       return fate;
     },
+
+    // 初始化地图
     initMap() {
       window.minemap.domainUrl = '//minedata.cn';
       window.minemap.dataDomainUrl = '//datahive.minedata.cn';
@@ -312,45 +307,33 @@ export default {
       window.minemap.accessToken = '0c95154806ed45369e3858f0c69caa59';
       window.minemap.solution = 5594;
 
-      this.myMap = new window.minemap.Map({
-        container: 'map',
+      let option = {
         style: '//minedata.cn/service/solu/style/id/5594',
         center: [120.84146, 29.65949],
         zoom: 8,
         pitch: 10,
         // dragRotate: true,
-        maxZoom: 17, // 地图最大缩放级别限制
-        minZoom: 1, // 地图最小缩放级别限制
+        maxZoom: 15, // 地图最大缩放级别限制
+        minZoom: 3, // 地图最小缩放级别限制
         logoControl: false
-      });
+      };
 
-      this.myMap2 = new window.minemap.Map({
-        container: 'map-small',
-        style: '//minedata.cn/service/solu/style/id/5594',
-        center: [120.84146, 29.65949],
-        zoom: 12,
-        pitch: 10,
-        // dragRotate: true,
-        maxZoom: 17, // 地图最大缩放级别限制
-        minZoom: 1, // 地图最小缩放级别限制
-        logoControl: false
-      });
+      option.container = 'map';
+      this.myMap = new window.minemap.Map(option);
+      option.container = 'mini-map';
+      this.myMap2 = new window.minemap.Map(option);
 
       this.myMap.on('load', () => {
-        let fate = this.getDataForPoint();
-
-        for (let x of fate) {
+        // let fate = this.getDataForPoint();
+        // 渲染地图打点；
+        for (let x of esCenter) {
           let el = document.createElement('div');
-          // el.id = 'marker';
-          el.setAttribute('class', x.color === 'yellow' ? 'yellow-circle' : 'blue-circle');
-          el.setAttribute('id', `point-${+new Date()}`);
-          // el.setAttribute('data-lng', x.lng);
-          // el.setAttribute('data-lat', x.lat);
+          el.setAttribute('class', x.type === 'dw' ? 'yellow-circle' : 'blue-circle');
 
-          this.markers[x.id] = new minemap.Marker(el, {
+          let marker = new minemap.Marker(el, {
               offset: [2, -5]
             })
-            .setLngLat([x.lng, x.lat])
+            .setLngLat([x.longitude, x.latitude])
             // .setPopup(popup)
             .addTo(this.myMap);
 
@@ -360,72 +343,55 @@ export default {
           el.addEventListener('mouseleave', (e) => {
             el.style.cursor = 'none';
           });
-          el.addEventListener('click', (e) => {
-            this.pointInfo = x.info;
-            this.$nextTick(() => {
-              // let popupDom = $('#point-info');
-              let popupDom = document.getElementById('point-info-template');
-              let popup = new minemap.Popup({
-                  closeButton: true,
-                  offset: [17, -10]
-                })
-                .setHTML('<div id="point-info-active">' + popupDom.innerHTML + '</div>');
-              // .setText(x.info);
-              this.markers[x.id].setPopup(popup);
+          el.addEventListener('click', (e) => { // marker的点击事件：出现marker信息的弹框；
+            $('#point-info-active').remove();
+            this.clickOnPointFlag = true;
+            // console.log('--point');
 
-              // console.log(e.target.style.transform);
-              // if (e.target.id === this.activePoint.id) {
-              //   return;
-              // }
-              // if (this.activePoint.id) {
-              //   $(this.activePoint).velocity('reverse', {
-              //     duration: 800,
-              //     easing: 'swing'
-              //   });
-              // }
-              //
-              // let pos1 = e.target.style.transform.indexOf('(');
-              // let pos2 = e.target.style.transform.indexOf(',');
-              // let pos3 = e.target.style.transform.indexOf(')');
-              // this.activePoint = {
-              //   id: e.target.id,
-              //   translateX: e.target.style.transform.substring(pos1 + 1, pos2),
-              //   translateY: e.target.style.transform.substring(pos2 + 2, pos3)
-              // }
-              //
-              // $(e.target).velocity({
-              //   translateX: this.activePoint.translateX,
-              //   translateY: this.activePoint.translateY
-              // }, {
-              //   duration: 0
-              // }).velocity({
-              //   translateX: this.activePoint.translateX,
-              //   translateY: this.activePoint.translateY,
-              //   scale: 2
-              // }, {
-              //   duration: 800,
-              //   easing: 'swing'
-              // });
-            })
+            // 获取弹框信息和3个表格的数据信息
+            this.$http.post(CONFIG.apiHost + '/RTS/queryEmergencyStationDetail', {unitCode: x.unitCode, sname: x.unitName}).then((res) => {
+              if (res.data.code !== '100000') return;
+              console.log(res.data.dataBody);
+              this.pointInfo = res.data.dataBody.contacts;
+              this.$nextTick(() => {
+                let popupDom = document.getElementById('point-info-template');
+                let popup = new minemap.Popup({
+                    closeButton: false,
+                    offset: [17, -10]
+                  })
+                  .setHTML('<div id="point-info-active">' + popupDom.innerHTML + '</div>')
+                  .setLngLat([x.longitude, x.latitude])
+                  .addTo(this.myMap);
+                // .setText(x.info);
+                // marker.setPopup(popup);
+              });
+
+              this.table1Data = res.data.dataBody.team;
+              this.table2Data = res.data.dataBody.machinery;
+              this.table3Data = res.data.dataBody.supplies;
+            });
           });
         }
 
-        let geoData = {
+        // 聚合点渲染
+        let geoData = { // 创建聚合点的geojson；
           type: 'FeatureCollection',
           features: []
         };
-        for (let x = 0; x < 1000; x++) {
+        for (let x of esCenter) {
           geoData.features.push({
             geometry: {
               type: 'Point',
               coordinates: [
-                120.84146 + Math.random() - 0.5,
-                29.65949 + Math.random() - 0.5
+                x.longitude,
+                x.latitude
               ]
             },
             type: 'Features'
           });
         }
+
+        // 根据geojson创建数据源
         this.myMap2.addSource('data-point', {
           type: 'geojson',
           // data: '//minedata.cn/minemapapi/demo/assets/poi_suzhou.json',
@@ -434,17 +400,44 @@ export default {
           clusterMaxZoom: 15,
           clusterRadius: 50
         });
-        //添加非聚合图层
+
+        // 根据数据源，添加非聚合图层
+        // this.myMap2.addLayer({
+        //   'id': 'unclustered-points',
+        //   'type': 'symbol',
+        //   'source': 'data-point',
+        //   'filter': ['!has', 'point_count'],
+        //   'layout': {
+        //     'icon-image': 'bank-15'
+        //   }
+        // });
         this.myMap2.addLayer({
           'id': 'unclustered-points',
-          'type': 'symbol',
+          'type': 'circle',
           'source': 'data-point',
           'filter': ['!has', 'point_count'],
-          'layout': {
-            'icon-image': 'bank-15'
-          }
+          'paint': {
+            'circle-color': '#23d3a1',
+            'circle-radius': 12
+          },
         });
-        //添加聚合图层
+
+        // 根据数据源，添加非聚合数量图层
+        this.myMap2.addLayer({
+          'id': 'unclustered-count',
+          'type': 'symbol',
+          'source': 'data-point',
+          'layout': {
+            'text-field': '1',
+            'text-size': 14
+          },
+          'paint': {
+            'text-color': 'black'
+          },
+          'filter': ['!has', 'point_count']
+        });
+
+        // 根据数据源，添加聚合图层
         // let layers = [
         //   [1000, '#f28cb1'],
         //   [100, '#f1f075'],
@@ -455,7 +448,6 @@ export default {
           [100, '#23d3a1'],
           [0, '#23d3a1']
         ];
-
         layers.forEach((layer, i) => {
           this.myMap2.addLayer({
             'id': 'cluster-' + i,
@@ -463,14 +455,15 @@ export default {
             'source': 'data-point',
             'paint': {
               'circle-color': layer[1],
-              'circle-radius': 20
+              'circle-radius': 12
             },
             'filter': i === 0 ? ['>=', 'point_count', layer[0]] : ['all', ['>=', 'point_count', layer[0]],
               ['<', 'point_count', layers[i - 1][0]]
             ]
           });
         });
-        //添加数量图层
+
+        // 根据数据源，添加聚合数量图层
         this.myMap2.addLayer({
           'id': 'cluster-count',
           'type': 'symbol',
@@ -486,35 +479,115 @@ export default {
         });
       });
 
+      // 根据大地图的鼠标操控，来同步mini地图的中心坐标和缩放
       this.myMap.on('moveend', (e) => {
-        // console.log(e.target.transform);
+        // console.log(e.target.transform); // minemap实例的信息都存放在e.target.transform里面
         this.myMap2.flyTo({
           center: [e.target.transform._center.lng, e.target.transform._center.lat],
-          speed: 0.8,
+          speed: 1,
           zoom: e.target.transform._zoom
         });
       });
+
+      // 用来分析鼠标单击在marker上，还是marker以外的地图区域上，以此来响应3个表格的显示/隐藏状态
+      this.myMap.on('click', (e) => {
+        console.log('--map');
+        if (!this.clickOnPointFlag) {
+          this.showPointInfo = false;
+        } else {
+          this.showPointInfo = true;
+        }
+        this.clickOnPointFlag = false;
+      });
     },
+
+    // 初始化echarts图表
     initChart() {
-      this.chart1 = echarts.init(document.getElementById('chart1'));
-      this.chart2 = echarts.init(document.getElementById('chart2'));
-      this.chart1.setOption(options);
-      this.chart2.setOption(options);
+      this.chart1 = echarts.init(document.getElementById('chart1'));  // 中心统计图表
+      this.chart2 = echarts.init(document.getElementById('chart2'));  // 机械统计图表
+
+      this.getDataAndRenderChart();
+      this.timerForChart = setInterval(() => {
+        this.getDataAndRenderChart();
+      }, 300000);
+    },
+
+    // 获取数据，并渲染echarts图表
+    getDataAndRenderChart() {
+      // 中心统计图表渲染
+      this.$http.get(CONFIG.apiHost + '/RTS/queryEmergencyStationByUnitType').then((res) => {
+        if (res.data.code !== '100000') return;
+        console.log(res.data.dataBody);
+        options.xAxis.data = res.data.dataBody.map((item) => {
+          return item.areaName;
+        });
+        options.series[0].data = res.data.dataBody.map((item) => {
+          return item.detail[0].count;
+        });
+        options.series[1].data = res.data.dataBody.map((item) => {
+          return item.detail[1].count;
+        });
+        this.chart1.clear();
+        this.chart1.setOption(options);
+      });
+
+      // 机械统计图表渲染
+      this.$http.get(CONFIG.apiHost + '/RTS/queryEmergencyMachineryByUnitType').then((res) => {
+        if (res.data.code !== '100000') return;
+        console.log(res.data.dataBody);
+        options.xAxis.data = res.data.dataBody.map((item) => {
+          return item.areaName;
+        });
+        options.series[0].data = res.data.dataBody.map((item) => {
+          return item.detail[0].count;
+        });
+        options.series[1].data = res.data.dataBody.map((item) => {
+          return item.detail[1].count;
+        });
+        this.chart2.clear();
+        this.chart2.setOption(options);
+      });
+    },
+
+    // 获取数据，并渲染应急信息
+    getDataAndRenderForEmergencyInfo() {
+      this.$http.get(CONFIG.apiHost + '/RTS/querySummaryOfEmergencyMaterials').then((res) => {
+        if (res.data.code !== '100000') return;
+        this.emergencyInfo = {
+          unit: res.data.dataBody[0].cCount,
+          person: res.data.dataBody[0].pCount,
+          machine: res.data.dataBody[0].eCount,
+          team: res.data.dataBody[0].tCount
+        }
+      })
     }
   },
   mounted() {
     this.$nextTick(() => {
       this.initMap();
-      this.$http.get(CONFIG.apiHost + '/RTS/queryPassengerStationStatistics').then((res) => {
-        res.data.code === '100000' && console.log(res.data.dataBody);
-      });
-
-      this.$http.get(`${CONFIG.apiHost}/RTS/queryPassengerStationInformation?zd=05771`).then((res) => {
-        console.log(res.data);
-      });
-
       this.initChart();
+
+      this.today = new Date().pattern('yyyy年MM月dd日 EEE');
+      this.timerForToday = setInterval(() => {
+        this.today = new Date().pattern('yyyy年MM月dd日 EEE');
+      }, 60000);
+
+      this.getDataAndRenderForEmergencyInfo();
+      this.timerForEmergencyInfo = setInterval(() => {
+        this.getDataAndRenderForEmergencyInfo();
+      }, 300000);
     });
+  },
+  beforeDestroy() {
+    if (this.chart1) {
+      this.chart1.dispose();
+    }
+    if (this.chart2) {
+      this.chart2.dispose();
+    }
+    clearInterval(this.timerForToday);
+    clearInterval(this.timerForChart);
+    clearInterval(this.timerForEmergencyInfo);
   }
 }
 </script>
