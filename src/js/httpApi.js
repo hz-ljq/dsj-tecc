@@ -2,8 +2,8 @@
 *created by TK0335807 on 2018/2/8
 */
 import util from './util';
-// let apiHost ='http://10.100.254.132:8888';
-let apiHost ='http://47.98.129.186:8085';
+let apiHost ='http://10.100.254.132:8888';
+// let apiHost ='http://47.98.129.186:8085';
 let httpRequest = function({url,method='POST',data={}}){
     let opt ={
             method:method,

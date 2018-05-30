@@ -302,15 +302,34 @@ export default {
 
     // 初始化地图
     initMap() {
-      window.minemap.domainUrl = '//minedata.cn';
-      window.minemap.dataDomainUrl = '//datahive.minedata.cn';
-      window.minemap.spriteUrl = '//minedata.cn/minemapapi/v1.3/sprite/sprite';
-      window.minemap.serviceUrl = '//minedata.cn/service';
-      window.minemap.accessToken = '0c95154806ed45369e3858f0c69caa59';
-      window.minemap.solution = 5594;
+      // 公网地图
+      // window.minemap.domainUrl = '//minedata.cn';
+      // window.minemap.dataDomainUrl = '//datahive.minedata.cn';
+      // window.minemap.spriteUrl = '//minedata.cn/minemapapi/v1.3/sprite/sprite';
+      // window.minemap.serviceUrl = '//minedata.cn/service';
+      // window.minemap.accessToken = '0c95154806ed45369e3858f0c69caa59';
+      // window.minemap.solution = 5594;
+      // let option = {
+      //   style: '//minedata.cn/service/solu/style/id/5594',
+      //   // center: [120.84146, 29.65949],
+      //   center: [120.04146, 29.65949],
+      //   zoom: 7,
+      //   pitch: 10,
+      //   // dragRotate: true,
+      //   maxZoom: 15, // 地图最大缩放级别限制
+      //   minZoom: 3, // 地图最小缩放级别限制
+      //   logoControl: false
+      // };
 
+      // 本地地图
+      window.minemap.domainUrl = 'http://10.100.254.134';
+      window.minemap.dataDomainUrl = '//datahive.minedata.cn';
+      window.minemap.spriteUrl = 'http://10.100.254.134/minemapapi/v1.3/sprite/sprite';
+      window.minemap.serviceUrl = 'http://10.100.254.134/service';
+      window.minemap.accessToken = '9be4003e6e62452fa6c8e9c099b86457';
+      window.minemap.solution = 4653;
       let option = {
-        style: '//minedata.cn/service/solu/style/id/5594',
+        style: 'http://10.100.254.134/service/solu/style/id/4653',
         // center: [120.84146, 29.65949],
         center: [120.04146, 29.65949],
         zoom: 7,
