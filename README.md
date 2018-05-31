@@ -1,4 +1,4 @@
-# dsj-tecc1
+# dsj-tecc
 
 > A Vue.js project
 
